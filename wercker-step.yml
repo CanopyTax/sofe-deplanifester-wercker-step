@@ -1,0 +1,43 @@
+name: deploy-sofe-service
+version: 0.1.0
+description: Deploys sofe services to an S3 buckets, and then updates the sofe-manifest file via the sofe-deplanifester
+keywords:
+    - deploy
+    - sofe
+    - service
+    - deplanifester
+properties:
+    upload_dir:
+        type: string
+        required: true
+    main_file:
+        type: string
+        required: true
+    s3_region:
+        type: string
+        required: false
+        default: 'us-west-2'
+    s3_access_key:
+        type: string
+        required: true
+    s3_secret_key:
+        type: string
+        required: true
+    s3_location:
+        type: string
+        required: true
+    deplanifester_env:
+        type: string
+        required: true
+    deplanifester_url:
+        type: string
+        required: true
+    deplanifester_username:
+        type: string
+        required: true
+    deplanifester_password:
+        type: string
+        required: true
+    sofe_service_name:
+        type: string
+        required: true
