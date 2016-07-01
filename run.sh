@@ -18,13 +18,19 @@ mkdir -p ~/.aws/
 # Create access key file so we dont mess up any env_vars
 echo -e "[default]\nregion=$WERCKER_DEPLOY_SOFE_SERVICE_S3_REGION\naws_access_key_id = $WERCKER_DEPLOY_SOFE_SERVICE_S3_ACCESS_KEY\naws_secret_access_key = $WERCKER_DEPLOY_SOFE_SERVICE_S3_SECRET_KEY\n" > ~/.aws/config
 
+
 if [ "$WERCKER_DEPLOY_SOFE_SERVICE_DEBUG" == 'true' ]
 then
   head "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE"
 fi
 
+if [ $(file --mime-type -b "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE") != 'application/x-gzip' ]
+then
 # gzip the files in place
 find "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/" -type f -exec gzip "{}" \; -exec echo "{}" \; -exec mv "{}.gz" "{}" \;
+else
+echo "already gziped!"
+fi
 
 # Upload all the files
 aws s3 sync "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR" "s3://$WERCKER_DEPLOY_SOFE_SERVICE_S3_LOCATION" --content-encoding gzip --cache-control "public, max-age=31556926"
