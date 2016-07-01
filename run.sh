@@ -24,7 +24,7 @@ then
   head "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE"
 fi
 
-if [ $(file --mime-type -b "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE") != 'application/x-gzip' ]
+if [ "$(file --mime-type -b /pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE)" != 'application/x-gzip' ]
 then
 # gzip the files in place
 find "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/" -type f -exec gzip "{}" \; -exec echo "{}" \; -exec mv "{}.gz" "{}" \;
