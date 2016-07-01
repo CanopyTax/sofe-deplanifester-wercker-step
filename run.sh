@@ -18,11 +18,11 @@ echo -e "[default]\nregion=$WERCKER_DEPLOY_SOFE_SERVICE_S3_REGION\naws_access_ke
 
 if [ "$WERCKER_DEPLOY_SOFE_SERVICE_DEBUG" == 'true' ]
 then
-  head "$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE"
+  head "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE"
 fi
 
 # gzip the files in place
-find "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR" -type f -exec gzip "{}" \; -exec echo "{}" \; -exec mv "{}.gz" "{}" \;
+find "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/" -type f -exec gzip "{}" \; -exec echo "{}" \; -exec mv "{}.gz" "{}" \;
 
 # Upload all the files
 aws s3 sync "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR" "s3://$WERCKER_DEPLOY_SOFE_SERVICE_S3_LOCATION" --content-encoding gzip --cache-control "public, max-age=31556926"
