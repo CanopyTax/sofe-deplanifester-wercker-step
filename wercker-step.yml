@@ -1,5 +1,5 @@
 name: deploy-sofe-service
-version: 1.0.1
+version: 1.0.2
 description: Deploys sofe services to an S3 buckets, and then updates the sofe-manifest file via the sofe-deplanifester
 keywords:
     - deploy
@@ -44,4 +44,4 @@ properties:
     debug:
         type: string
         required: false
-        default: 'true'
+        default: 'false'
