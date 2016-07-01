@@ -18,7 +18,7 @@ echo -e "[default]\nregion=$WERCKER_DEPLOY_SOFE_SERVICE_S3_REGION\naws_access_ke
 
 if [ "$WERCKER_DEPLOY_SOFE_SERVICE_DEBUG" == 'true' ]
 then
-  head "/pipeline/source/*/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE"
+  head "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/*/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE"
 fi
 
 # gzip the files in place
