@@ -16,9 +16,9 @@ mkdir -p ~/.aws/
 # Create access key file so we dont mess up any env_vars
 echo -e "[default]\nregion=$WERCKER_DEPLOY_SOFE_SERVICE_S3_REGION\naws_access_key_id = $WERCKER_DEPLOY_SOFE_SERVICE_S3_ACCESS_KEY\naws_secret_access_key = $WERCKER_DEPLOY_SOFE_SERVICE_S3_SECRET_KEY\n" > ~/.aws/config
 
-if [ $WERCKER_DEPLOY_SOFE_SERVICE_DEBUG == 'true' ]
+if [ "$WERCKER_DEPLOY_SOFE_SERVICE_DEBUG" == 'true' ]
 then
-  head $WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE
+  head "$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE"
 fi
 
 # gzip the files in place
