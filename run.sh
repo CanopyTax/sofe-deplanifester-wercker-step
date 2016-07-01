@@ -12,6 +12,8 @@
 # $WERCKER_DEPLOY_SOFE_SERVICE_SOFE_SERVICE_NAME
 # $WERCKER_DEPLOY_SOFE_SERVICE_DEBUG
 
+
+DSS_VERSION=$(ls "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/")
 mkdir -p ~/.aws/
 # Create access key file so we dont mess up any env_vars
 echo -e "[default]\nregion=$WERCKER_DEPLOY_SOFE_SERVICE_S3_REGION\naws_access_key_id = $WERCKER_DEPLOY_SOFE_SERVICE_S3_ACCESS_KEY\naws_secret_access_key = $WERCKER_DEPLOY_SOFE_SERVICE_S3_SECRET_KEY\n" > ~/.aws/config
@@ -28,5 +30,4 @@ find "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/" -type f -exec g
 aws s3 sync "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR" "s3://$WERCKER_DEPLOY_SOFE_SERVICE_S3_LOCATION" --content-encoding gzip --cache-control "public, max-age=31556926"
 
 # Deploy using the deplanifester
-DSS_VERSION=$(ls "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/")
 curl -d "{ \"service\":\"$WERCKER_DEPLOY_SOFE_SERVICE_SOFE_SERVICE_NAME\",\"url\":\"https://$WERCKER_DEPLOY_SOFE_SERVICE_S3_LOCATION/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE\" }" -X PATCH "$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_URL/services?env=$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_ENV" -H "Accept: application/json" -k -H "Content-Type: application/json" -u "$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_USERNAME:$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_PASSWORD"
