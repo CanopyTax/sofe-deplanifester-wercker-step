@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 # $WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR
 # $WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE
 # $WERCKER_DEPLOY_SOFE_SERVICE_S3_REGION
@@ -35,5 +35,15 @@ fi
 # Upload all the files
 aws s3 sync "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR" "s3://$WERCKER_DEPLOY_SOFE_SERVICE_S3_LOCATION" --content-encoding gzip --cache-control "public, max-age=31556926"
 
+# To get curl to output the response contents but store the http status in a variable, you have to create a file descriptor and redirect curl output to it.
+# See http://superuser.com/questions/272265/getting-curl-to-output-http-status-code
+exec 3>&1
+
 # Deploy using the deplanifester
-curl -d "{ \"service\":\"$WERCKER_DEPLOY_SOFE_SERVICE_SOFE_SERVICE_NAME\",\"url\":\"https://$WERCKER_DEPLOY_SOFE_SERVICE_S3_LOCATION/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE\" }" -X PATCH "$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_URL/services?env=$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_ENV" -H "Accept: application/json" -k -H "Content-Type: application/json" -u "$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_USERNAME:$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_PASSWORD"
+STATUSCODE=$(curl -w '%{http_code}' -o >(cat >&3) -d "{ \"service\":\"$WERCKER_DEPLOY_SOFE_SERVICE_SOFE_SERVICE_NAME\",\"url\":\"https://$WERCKER_DEPLOY_SOFE_SERVICE_S3_LOCATION/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE\" }" -X PATCH "$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_URL/services?env=$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_ENV" -H "Accept: application/json" -k -H "Content-Type: application/json" -u "$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_USERNAME:$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_PASSWORD")
+
+if test $STATUSCODE -ne 200; then
+	echo # New line
+	echo "Failed to deploy sofe service. Deplanifester returned http status ${STATUSCODE}"
+	exit 1
+fi
