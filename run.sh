@@ -42,8 +42,14 @@ exec 3>&1
 # Deploy using the deplanifester
 STATUSCODE=$(curl -w '%{http_code}' -o >(cat >&3) -d "{ \"service\":\"$WERCKER_DEPLOY_SOFE_SERVICE_SOFE_SERVICE_NAME\",\"url\":\"https://$WERCKER_DEPLOY_SOFE_SERVICE_S3_LOCATION/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE\" }" -X PATCH "$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_URL/services?env=$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_ENV" -H "Accept: application/json" -k -H "Content-Type: application/json" -u "$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_USERNAME:$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_PASSWORD")
 
-if test $STATUSCODE -ne 200; then
-	echo # New line
+echo # New line
+echo "Deplanifester status code was ${STATUSCODE}"
+echo # New line
+
+if test $STATUSCODE -ne 200;
+then
 	echo "Failed to deploy sofe service. Deplanifester returned http status ${STATUSCODE}"
 	exit 1
+else
+	echo "Successful deployment of sofe service"
 fi
