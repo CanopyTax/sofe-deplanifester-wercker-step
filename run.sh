@@ -24,15 +24,13 @@ then
   head "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE"
 fi
 
-echo "$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE"
 echo "$(file --mime-type -b ./$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE)",,
-if [ "$(file --mime-type -b ./$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE)" != 'application/x-gzip' ]
+if [ "$(file --mime-type -b ./$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE)" =~ 'gzip' ]
 then
-cat "./$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE"
+echo "already gziped!"
+else
 # gzip the files in place
 find "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR/" -type f -exec gzip "{}" \; -exec echo "{}" \; -exec mv "{}.gz" "{}" \;
-else
-echo "already gziped!"
 fi
 
 # Upload all the files
