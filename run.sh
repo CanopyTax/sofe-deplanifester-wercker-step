@@ -41,7 +41,12 @@ aws s3 sync "/pipeline/source/$WERCKER_DEPLOY_SOFE_SERVICE_UPLOAD_DIR" "s3://$WE
 exec 3>&1
 
 # Deploy using the deplanifester
-STATUSCODE=$(curl -w '%{http_code}' -o >(cat >&3) -d "{ \"service\":\"$WERCKER_DEPLOY_SOFE_SERVICE_SOFE_SERVICE_NAME\",\"url\":\"https://$WERCKER_DEPLOY_SOFE_SERVICE_S3_LOCATION/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE\" }" -X PATCH "$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_URL/services?env=$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_ENV" -H "Accept: application/json" -k -H "Content-Type: application/json" -u "$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_USERNAME:$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_PASSWORD")
+request="{ \"service\":\"$WERCKER_DEPLOY_SOFE_SERVICE_SOFE_SERVICE_NAME\",\"url\":\"https://$WERCKER_DEPLOY_SOFE_SERVICE_S3_LOCATION/$DSS_VERSION/$WERCKER_DEPLOY_SOFE_SERVICE_MAIN_FILE\" }"
+patchURL="$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_URL/services?env=$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_ENV"
+echo "Patch $patchURL with"
+echo "$request"
+
+STATUSCODE=$(curl -w '%{http_code}' -o >(cat >&3) -d "$request" -X PATCH "$patchURL" -H "Accept: application/json" -k -H "Content-Type: application/json" -u "$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_USERNAME:$WERCKER_DEPLOY_SOFE_SERVICE_DEPLANIFESTER_PASSWORD")
 
 echo # New line
 echo "Deplanifester status code was ${STATUSCODE}"
